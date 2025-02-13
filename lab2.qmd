@@ -4,23 +4,174 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+#1
+glimpse(tree_dat)
+
+# answer: there are 131,386 rows and 8 columns. The columns are tree ID, stand ID, stand, year, species, age, inc (linear growth increment), and rad_ib (bark radius of tree at breast height).
 ```
 
-You can add options to executable code like this
-
 ```{r}
-#| echo: false
-2 * 2
+#2
+tree_count1 <- tree_dat %>%
+  filter(standID == 1)
+print(tree_count1)
+
+# answer: 979
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+```{r}
+#3
+tree_dat %>%
+  filter(species %in% c("ABBA", "PIST")) %>%
+  count(species)
+
+# answer: ABBA - 13033; PIST - 4188
+```
+
+```{r}
+#4
+tree_dat %>%
+  filter(year == max(year), age > 200) %>%
+  tally()
+
+# answer: 7
+```
+
+```{r}
+#5
+tree_dat %>%
+  slice_max(age)
+
+# answer: 269
+```
+
+```{r}
+#6
+tree_dat %>%
+  filter(year == 2001) %>%
+  slice_max(age, n = 5)
+
+# answer: 263, 259, 212, 206, 206
+```
+
+```{r}
+#7
+tree_dat %>%
+  slice_sample(prop = 0.3) %>%
+  tally()
+
+# answer: 39415
+```
+
+```{r}
+#8
+tree_dat %>%
+  filter(standID == 5, year == 2007) %>%
+  arrange(desc(rad_ib)) %>%
+  slice_head(n = 3)
+
+# answer: 128, 157, 135
+```
+
+```{r}
+#9
+tree_dat %>%
+  select(treeID, standID, year, rad_ib) %>%
+  filter (standID == 3, year == 2007) %>%
+  slice_min(rad_ib, n = 3)
+
+# answer: 50, 56, 36
+```
+
+```{r}
+#10
+tree_dat %>%
+  select(treeID, standID, year, rad_ib) %>%
+  select(-standID) %>%
+  glimpse()
+
+# answer: table
+```
+
+```{r}
+#11
+tree_dat %>%
+  select(contains("ID")) %>%
+  glimpse()
+
+# answer: table
+```
+
+```{r}
+#12
+tree_dat %>%
+  select(contains("ID") | contains("stand")) %>%
+  glimpse()
+
+# answer: table
+```
+
+```{r}
+#13
+tree_dat <- tree_dat %>%
+  rename(rad_ib_mm = rad_ib, inc_mm = inc) %>%
+  glimpse ()
+
+#answer: table
+```
+
+```{r}
+#14
+tree_dat %>%
+  mutate(DBH = rad_ib_mm/10) %>%
+  mutate(BA_m2 = 0.00007854*DBH^2) %>%
+  filter(species == "POTR", year == 2007) %>%
+  summarize(mean_BA_m2 = mean(BA_m2, na.rm = TRUE))
+
+# answer: 0.009241546
+```
+
+```{r}
+#15
+tree_dat %>%
+  mutate(established = if_else(age > 5, TRUE, FALSE)) %>%
+  count(established)
+
+# answer: TRUE - 122503; FALSE - 8883
+```
+
+```{r}
+#16
+tree_dat %>%
+  mutate(DBH_class = case_when(DBH >= 0 & DBH < 2.5 ~ "seedling", DBH >= 2.5 & DBH < 10 ~ "sapling", DBH >= 10 & DBH < 30 ~ "pole", DBH >= 30 ~ "sawlog", TRUE ~ NA_character_)) %>%
+  filter(year == 2007) %>%
+  count(DBH_class)
+
+# answer: pole - 473; sapling
+```
+
+```{r}
+#17
+
+```
+
+```{r}
+#18
+
+```
+
+```{r}
+#19
+
+```
+
+```{r}
+#20
+
+```
+
+```{r}
+# final question
+
+```
