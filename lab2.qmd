@@ -2,13 +2,14 @@
 title: "lab2"
 format: html
 editor: visual
+img: Pinus_resinosa.jpeg
 ---
 
 ```{r}
 #1
 glimpse(tree_dat)
 
-# answer: there are 131,386 rows and 8 columns. The columns are tree ID, stand ID, stand, year, species, age, inc (linear growth increment), and rad_ib (bark radius of tree at breast height).
+# answer: There are 131,386 rows and 8 columns. The columns are tree ID, stand ID, stand, year, species, age, inc (linear growth increment), and rad_ib (bark radius of tree at breast height).
 ```
 
 ```{r}
@@ -91,7 +92,7 @@ tree_dat %>%
   select(-standID) %>%
   glimpse()
 
-# answer: table
+# answer: Table
 ```
 
 ```{r}
@@ -100,7 +101,7 @@ tree_dat %>%
   select(contains("ID")) %>%
   glimpse()
 
-# answer: table
+# answer: Table
 ```
 
 ```{r}
@@ -109,7 +110,7 @@ tree_dat %>%
   select(contains("ID") | contains("stand")) %>%
   glimpse()
 
-# answer: table
+# answer: Table
 ```
 
 ```{r}
@@ -118,7 +119,7 @@ tree_dat <- tree_dat %>%
   rename(rad_ib_mm = rad_ib, inc_mm = inc) %>%
   glimpse ()
 
-#answer: table
+#answer: Table
 ```
 
 ```{r}
@@ -148,7 +149,7 @@ tree_dat %>%
   filter(year == 2007) %>%
   count(DBH_class)
 
-# answer: pole - 473; sapling - 1817; sawlog - 1
+# answer: Pole - 473; Sapling - 1817; Sawlog - 1
 ```
 
 ```{r}
@@ -157,7 +158,7 @@ tree_dat %>%
   filter (year == 2007) %>%
   summarise(mean(DBH), sd(DBH))
 
-# answer: mean - 8.046755, this is the average DBH of all trees in the data set; sd - 3.069321, this is shows how spread out the tree DBH is compared to the mean DBH.
+# answer: Mean - 8.046755, this is the average DBH of all trees in the data set. SD - 3.069321, this is shows how spread out the tree DBH is compared to the mean DBH.
 ```
 
 ```{r}
@@ -177,7 +178,7 @@ tree_dat %>%
 tree_dat %>%
   summarise(unique_years = n_distinct(year), first_year = min(year), last_year = max(year))
 
-# answer: unique years - 111; first year - 1897; last year - 2007
+# answer: Unique years - 111; First year - 1897; Last year - 2007
 ```
 
 ```{r}
@@ -191,10 +192,22 @@ largest_years <- stand_years_sum %>%
   filter(unique_years == max_unique_years)
 largest_years
 
-#answer: stands 1, 15, 16, 17, 24
+#answer: Stands 1, 15, 16, 17, 24
 ```
 
 ```{r}
 # final question
+tree_dat %>%
+  group_by(species) %>%
+  mutate(inc_change = inc_mm - lag(inc_mm))
+species_growth <- tree_dat %>%
+  group_by(species) %>%
+  summarise(avg_growth = mean(inc_mm, na.rm = TRUE)) %>%
+  arrange(desc(avg_growth))
+fastest_growth <- head(species_growth, 3)
+slowest_growth <- tail(species_growth, 3)
+print(fastest_growth)
+print(slowest_growth)
 
+# answer: The 3 species with the fastest growth are PIRE, PIBA, and POTR. The 3 species with the slowest growth are QURU, THOC, and LALA.
 ```
