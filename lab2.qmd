@@ -127,7 +127,7 @@ tree_dat %>%
   mutate(DBH = rad_ib_mm/10) %>%
   mutate(BA_m2 = 0.00007854*DBH^2) %>%
   filter(species == "POTR", year == 2007) %>%
-  summarize(mean_BA_m2 = mean(BA_m2, na.rm = TRUE))
+  summarise(mean_BA_m2 = mean(BA_m2, na.rm = TRUE))
 
 # answer: 0.009241546
 ```
@@ -148,27 +148,50 @@ tree_dat %>%
   filter(year == 2007) %>%
   count(DBH_class)
 
-# answer: pole - 473; sapling
+# answer: pole - 473; sapling - 1817; sawlog - 1
 ```
 
 ```{r}
 #17
+tree_dat %>%
+  filter (year == 2007) %>%
+  summarise(mean(DBH), sd(DBH))
 
+# answer: mean - 8.046755, this is the average DBH of all trees in the data set; sd - 3.069321, this is shows how spread out the tree DBH is compared to the mean DBH.
 ```
 
 ```{r}
 #18
+tree_dat %>%
+  filter(year == 2003) %>%
+  group_by(species) %>%
+  summarise(mean_age = mean(age, na.rm = TRUE)) %>%
+  arrange(desc(mean_age)) %>%
+  head(3)
 
+# answer: THOC, FRNI, PIST
 ```
 
 ```{r}
 #19
+tree_dat %>%
+  summarise(unique_years = n_distinct(year), first_year = min(year), last_year = max(year))
 
+# answer: unique years - 111; first year - 1897; last year - 2007
 ```
 
 ```{r}
 #20
+stand_years_sum <- tree_dat %>%
+  group_by(standID) %>%
+  summarise(unique_years = n_distinct(year)) %>%
+  arrange(desc(unique_years))
+max_unique_years <- max(stand_years_sum$unique_years)
+largest_years <- stand_years_sum %>%
+  filter(unique_years == max_unique_years)
+largest_years
 
+#answer: stands 1, 15, 16, 17, 24
 ```
 
 ```{r}
