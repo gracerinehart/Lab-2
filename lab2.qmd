@@ -1,11 +1,15 @@
 ---
-title: "lab2"
+title: "Lab 2"
 format: html
 editor: visual
 ---
 
 ```{r}
 #1
+library(tidyverse)
+
+tree_dat <- read_csv("data/doi_10_5061_dryad_18pm5__v20170130/Itter_et_al_EAP16-0589.R1/tree_dat.csv")
+
 glimpse(tree_dat)
 
 # answer: There are 131,386 rows and 8 columns. The columns are tree ID, stand ID, stand, year, species, age, inc (linear growth increment), and rad_ib (bark radius of tree at breast height).
@@ -116,18 +120,21 @@ tree_dat %>%
 #13
 tree_dat <- tree_dat %>%
   rename(rad_ib_mm = rad_ib, inc_mm = inc) %>%
-  glimpse ()
+  glimpse()
 
 #answer: Table
 ```
 
 ```{r}
 #14
-tree_dat %>%
+tree_dat <- tree_dat %>%
   mutate(DBH = rad_ib_mm/10) %>%
-  mutate(BA_m2 = 0.00007854*DBH^2) %>%
-  filter(species == "POTR", year == 2007) %>%
-  summarise(mean_BA_m2 = mean(BA_m2, na.rm = TRUE))
+  mutate(BA_m2 = 0.00007854*DBH^2)
+
+tree_dat %>%
+filter(species == "POTR", year == 2007)
+
+summarise(tree_dat, mean_BA_m2 = mean(BA_m2, na.rm = TRUE))
 
 # answer: 0.009241546
 ```
@@ -199,14 +206,22 @@ largest_years
 tree_dat %>%
   group_by(species) %>%
   mutate(inc_change = inc_mm - lag(inc_mm))
+
 species_growth <- tree_dat %>%
   group_by(species) %>%
   summarise(avg_growth = mean(inc_mm, na.rm = TRUE)) %>%
   arrange(desc(avg_growth))
-fastest_growth <- head(species_growth, 3)
-slowest_growth <- tail(species_growth, 3)
-print(fastest_growth)
-print(slowest_growth)
+
+slice_max(species_growth, avg_growth, n = 3)
+
+slice_min(species_growth, avg_growth, n = 3)
 
 # answer: The 3 species with the fastest growth are PIRE, PIBA, and POTR. The 3 species with the slowest growth are QURU, THOC, and LALA.
 ```
+
+
+```{r}
+#| echo: false
+knitr::include_graphics("imgs/Pinus_resinosa.jpg")
+```
+
